@@ -1,0 +1,27 @@
+[project]
+name = "innovation-utilities"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Martí Umbert",email = "marti.umbert@bsc.es"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "faster-whisper (>=1.1.1,<2.0.0)",
+    "logging (>=0.4.9.6,<0.5.0.0)",
+    "tqdm (>=4.67.1,<5.0.0)",
+    "torch (>=2.6.0,<3.0.0)",
+    "pyyaml (>=6.0.2,<7.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "innovation_utilities", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
