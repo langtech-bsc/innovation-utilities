@@ -28,7 +28,7 @@ To setup this project you can use poetry.
 1. install poetry: https://python-poetry.org/docs/
 2. should be as easy as running
 ```bash
-git clone XYZ
+git clone git@github.com:langtech-bsc/innovation-utilities.git
 cd innovation-utilities
 poetry install
 ```
