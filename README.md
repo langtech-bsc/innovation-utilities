@@ -105,7 +105,7 @@ Here we'll list the examples we include in the utilities repo:
   - it transcribes the wav files in a folder into txt files within the output folder. 
   - Parameters are specified in the configration file config/transcribe_folder.yaml. 
   - The current example should work as is with a folder containing wav files in Spanish. 
-  - It can be run with script: bash [scripts/run_example.sh](scripts/run_transcribe_folder_example.sh). The first time you run it will download the model files.
+  - It can be run with script: bash [scripts/run_transcribe_folder_example.sh](scripts/run_transcribe_folder_example.sh). The first time you run it will download the model files.
 
 ## 5. Folder structure
 
