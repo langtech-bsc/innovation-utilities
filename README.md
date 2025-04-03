@@ -117,11 +117,14 @@ innovation-utilities/
 ├── config                                      # config files
 │   └── transcribe_folder.yaml                  #   - config file for the corresponding example
 ├── data
-│   ├── input
+│   ├── input                                   # example of input data
 │   │   ├── common_voice_es_41913638.mp3
 │   │   ├── common_voice_es_41913640.mp3
 │   │   └── common_voice_es_42044997.mp3
-│   └── output
+│   └── output                                  # example of output data
+│       ├── common_voice_es_41913638.json
+│       ├── common_voice_es_41913640.json
+│       └── common_voice_es_42044997.json
 ├── Dockerfile
 ├── examples                                    # examples showing how the classes can be used
 │   └── transcribe_folder_example.py            #   - ASR applied to a folder
