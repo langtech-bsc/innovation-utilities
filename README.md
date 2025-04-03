@@ -59,8 +59,6 @@ docker run -it -v $(realpath $INPUT_FOLDER):/$INPUT_FOLDER -v $(realpath $OUTPUT
 
 Running the examples should be as easy as using the scripts in the environment or in the docker image.
 
-
-
 ### Configuration file
 
 Check the configuration files used by the examples in order to know how to edit them.
@@ -73,7 +71,7 @@ modules:
   collect_data:
     log_level: DEBUG
     data:
-      input_folder: data/input
+      input_folder: data/input     # change this path to your convenience
       input_extensions:
         - .mp3                     # it works with wav files as well
   transcribe_audios:
@@ -86,7 +84,7 @@ modules:
       beam_size: 5
       language: es                # es for Spanish
     data:
-      output_folder: data/output
+      output_folder: data/output  # change this path to your convenience
       output_extensions:
         - .json
 ```
