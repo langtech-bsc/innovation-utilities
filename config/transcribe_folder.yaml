@@ -1,0 +1,21 @@
+---
+modules:
+  collect_data:
+    log_level: DEBUG
+    data:
+      input_folder: data/input
+      input_extensions:
+        - .mp3
+  transcribe_audios:
+    log_level: DEBUG
+    params:
+      model: faster-whisper
+      model_size: large-v2
+      device: null
+      compute_type: null
+      beam_size: 5
+      language: es
+    data:
+      output_folder: data/output
+      output_extensions:
+        - .json
