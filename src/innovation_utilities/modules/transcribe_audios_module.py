@@ -98,11 +98,15 @@ class FasterWhisperASR(ASRBase):
                 segments, info = self.model.transcribe(wav_file, beam_size = self.beam_size)
                 logging.debug("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 
+            total_duration = round(info.duration, 2)
             transcription = []
-            for segment in segments:
-                seg = {"start": segment.start, "end": segment.end, "text": segment.text.strip()}
-                transcription.append(seg)
-                logging.debug(seg)
+            with tqdm(total=total_duration, unit=" seconds") as pbar:
+                for segment in tqdm(segments):
+                    seg = {"start": segment.start, "end": segment.end, "text": segment.text.strip()}
+                    transcription.append(seg)
+                    logging.debug(seg)
+                    segment_duration = segment.end - segment.start
+                    pbar.update(segment_duration)
 
             all_transcriptions.append(transcription)
             all_infos.append(info)
