@@ -19,6 +19,10 @@
 
 This project aims to gather basic python classes to quickly run some basic tasks. We'll start with ASR and some examples.
 
+Some recommendations:
+- We recommend using the code by building the docker image.
+- We've tested the configuration with device set to cpu, but the gpu device should be working as well.
+
 ##  2. Installation
 
 ### Poetry
