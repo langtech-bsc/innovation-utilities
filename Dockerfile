@@ -34,25 +34,3 @@ RUN poetry install
 
 # Start virtual env when bash starts
 RUN echo 'source .venv/bin/activate' >> ~/.bashrc
-
-#########################
-
-# RUN apt update && \
-#     apt install pipx --yes && \
-#     pipx ensurepath && \
-#     apt upgrade pipx --yes && \
-#     pipx install poetry && \
-#     pipx upgrade poetry
-
-# RUN pip install --upgrade pip
-
-# # /root/.local/pipx/venvs/poetry/bin/poetry install
-
-# WORKDIR /code/innovation-utilities
-# COPY . .
-# ENV PATH="/root/.local/pipx/venvs/poetry:$PATH"
-# # RUN poetry config virtualenvs.create false && \
-# #     poetry install --no-interaction --no-ansi
-
-# Use an official Python runtime as a base image
-# FROM python:3.11-slim-buster
