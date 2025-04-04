@@ -22,6 +22,7 @@ This project aims to gather basic python classes to quickly run some basic tasks
 Some recommendations:
 - We recommend using the code by building the docker image.
 - We've tested the configuration with device set to cpu, but the gpu device should be working as well.
+- Start by building the docker image and running the transcribe_folder_example.py. Then, adapt the configuration file to your needs.
 
 ##  2. Installation
 
