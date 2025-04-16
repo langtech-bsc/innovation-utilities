@@ -1,3 +1,49 @@
-__pycache__
-**/__pycache__
+# Byte-compiled / optimized / DLL files
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
 .venv/
+env/
+venv/
+
+# Poetry & Pipenv files
+.poetry/
+.qodo
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# VS Code
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Pytest cache
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Logs
+*.log
+
+# Local env files
+.env
+.env.*
+
+# IDEs
+.idea/

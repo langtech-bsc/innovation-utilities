@@ -1,5 +1,5 @@
 from faster_whisper import WhisperModel
-from innovation_utilities.utils import io_utils
+from innovation.speech.utils import io_utils
 import logging
 from tqdm import tqdm
 import torch

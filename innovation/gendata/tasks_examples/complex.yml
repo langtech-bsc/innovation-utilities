@@ -1,0 +1,295 @@
+# Length lof messages_list, output_keys and output_types must be same.
+# User message is requiered, but not system.
+# To include curly braces {} in a JSON string, use double curly braces {{}} as {} is reserved for formatting placeholders.
+messages_list:
+  - 
+    - role: system
+      content: |
+        You are an assistant that transforms a description of a person (profession, personality, or context) into a specific, actionable use case.  
+        Your output must be a concise use case title (in Title Case), suitable for matching to a tool or function.
+
+        - Output should be a short title or label, not a full sentence  
+        - Use natural language in title form (e.g., "Hotel Reservation Modifications (Changing Dates and Tariffs)")  
+        - Do not reference the person, user, or LLM  
+        - Make it specific, functional, and easy to map to a system capability  
+        - Keep it concise (ideally under 10 words)  
+        - You may use parentheses to clarify scope or intent (e.g., task subtype, specific function)
+
+        Return only the use case title — no explanations, no extra text.
+
+    - role: user
+      content: | # {persona} is a key from your JSON data. Ensure it exists before using it.
+        Persona:  
+          {persona}
+  -
+    - role: system
+      content: | # {language} is selected randomly from random_extra_keys for each round.
+        You are an expert AI system responsible for generating structured synthetic data for function calling in an LLM model chat, where user information will be gathered directly by the LLM, eliminating the need to create functions for this purpose.  
+        Your primary goal is to analyze a given use case and create a set of **5 to 10 distinct functions** representing actionable operations.  
+
+        **Guidelines for Generating Functions:**  
+
+        1. **Function Characteristics:**  
+            - Each function must be **clear, unambiguous**, and represent a specific action or intent.  
+            - Avoid redundancy by ensuring all functions are distinct and serve a unique purpose.  
+            - Do not create trivial or overly generic functions such as `end_conversation`, `start_conversation`, or `additional_assistance`.  
+            - Do not create functions solely for collecting user information, as this should be obtained directly through the chat.
+            - Include only meaningful and specific parameters to enhance function utility, only if required.  
+            - Avoid Redundant or Static Parameters:
+            - Do not add parameters that are simply used to retrieve static information or execute self-contained actions. For example, a function like get_registration_duration should not take parameters like user_id if the function always returns the same result (i.e., it doesn’t depend on external factors). 
+
+        2. **Domain-Specific Context:**  
+            - Functions must capture all significant exchanges in the conversation.
+            - Avoid creating functions for questions that can be directly answered by an LLM.
+            - Reflect the domain-specific purpose (e.g., customer service, telecom, and internet setup)
+            - Design functions to maintain continuity across multi-turn dialogues.
+
+        3. **Use of Enums:**  
+            - If a parameter accepts a specific, finite set of values, use an `enum` to define those values as valid inputs.  
+            - Do not create enums for parameters accepting arbitrary or free-form data (e.g., user-provided text or unbounded numerical values).  
+
+        4. **Function Naming and Clarity:**  
+            - Use descriptive, purpose-driven names (e.g., `configure_lighting_schedule`, `activate_security_alarm`).  
+            - Ensure descriptions clearly explain the function’s purpose in one to two sentences.  
+
+        5. **Parameterization:**  
+            - Define input parameters in the `properties` section with their type, description, and example values.  
+            - Clearly indicate required parameters using the `required` array.  
+            - Set `additionalProperties` to `false` to prevent unspecified inputs.  
+
+        6. **Output Structure:**  
+            - Use this JSON structure for each function with parameters:  
+              {{
+                "type": "function",
+                "function": {{
+                  "name": "<function_name>",
+                  "description": "<brief description of the function's purpose>",
+                  "parameters": {{
+                    "type": "object",
+                    "properties": {{
+                      "<parameter_name>": {{
+                        "type": "<parameter_type>",
+                        "description": "<parameter description>",
+                        "enum": ["<value1>", "<value2>", ...]  // Optional: Include only when necessary
+                      }}
+                      ...
+                    }},
+                    "required": ["<parameter1>", "<parameter2>", ...],
+                    "additionalProperties": false
+                  }}
+                }}
+              }}
+            - Use this JSON structure for auxiliary functions:  
+              {{
+                "type": "function",
+                "function": {{
+                  "name": "<function_name>",
+                  "description": "<brief description of the function's purpose>",
+                  "parameters": {{
+                    "type": "object",
+                    "properties": {{...}}  # Properties object, can include parameters if needed; otherwise, keep it empty.
+                    "required": [],
+                    "additionalProperties": false
+                  }}
+                }}
+              }}
+
+        7. **Quality Standards:**  
+            - Functions must have practical utility in the specified use case domain. Avoid nonsense or generic functions.  
+            - Ensure no significant user intents or actions are overlooked.  
+            - Validate all JSON for correctness and completeness.  
+
+        8. **Output Requirements:**  
+            - Generate 5 to 10 unique functions based solely on the given use case.  
+            - The response must be strictly JSON with no additional explanations, headers, or formatting.  
+
+        9. **Output Requirements:**  
+            - Ensure no significant intent or action is overlooked.
+            - Only generate functions that require additional user input or actions that cannot be inferred automatically by the LLM.
+
+        10. **Auxiliary Functions**  
+          - When a function requires specific input parameters, create auxiliary functions to retrieve the necessary data for those parameters from the database.  
+          - First, determine whether the function needs parameters. If it does, include the required logic in the auxiliary function accordingly; otherwise, design it without parameters.  
+          - Do **not** pass parameters to auxiliary functions — they are meant solely to fetch data directly from the database.  
+          - Place all auxiliary functions **after** the main functional logic in your code. These should provide users with selectable or retrievable options for the required parameters.
+
+        11. **A random Input Example:**  
+            ```
+            **Use Case**:
+              Providing sarcastic or witty comments about the user’s book choices using snarky librarian quotes.
+            ```
+
+        12. **A random Output Example:**  
+
+        [
+          {{
+            "type": "function",
+            "function": {{
+              "name": "recommend_mystery_read",
+              "description": "Recommends a delightfully twisted mystery novel based on the user's suspiciously specific reading history.",
+              "parameters": {{
+                "type": "object",
+                "properties": {{
+                  "user_id": {{
+                    "type": "string",
+                    "description": "The unique identifier of the user, used to retrieve their reading history. Yes, we *do* remember that vampire romance phase."
+                  }},
+                  "mood": {{
+                    "type": "string",
+                    "description": "The current mood or vibe the user wants from a mystery book (e.g., 'dark', 'whimsical', 'thriller', 'gothic'). Expect the librarian to judge silently.",
+                    "enum": ["dark", "whimsical", "thriller", "gothic", "cozy", "noir"],
+                    "default": "dark"
+                  }},
+                  "max_pages": {{
+                    "type": "integer",
+                    "description": "The maximum number of pages the user is willing to read before demanding a twist ending. Optional.",
+                    "minimum": 50,
+                    "default": 350
+                  }}
+                }},
+                "required": ["user_id"],
+                "additionalProperties": false
+              }}
+            }}
+          }},
+          ...
+          {{
+            "type": "function",
+            "function": {{
+              "name": "list_librarian_snark_quotes",
+              "description": "Returns a curated list of sarcastic literary quips and passive-aggressive quotes from the librarian. No parameters. No mercy.",
+              "parameters": {{
+                "type": "object",
+                "properties": {{}},
+                "required": [],
+                "additionalProperties": false
+              }}
+            }}
+          }}
+        ]
+
+        Generate 5 to 10 unique functions based solely on the provided use case. The example conversation is included only to demonstrate the flow of dialogue and should not influence the function generation process.  
+
+        **Warning**: Return **only** JSON, must be **complete** and **correct**. Do not include explanations, feedback, or any additional text, not even code block (```json```).
+
+    - role: user
+      content: | # {use_case} is a key from your JSON data. Ensure it exists before using it.
+        Use Case:  
+          {use_case}  
+
+  - 
+    - role: system
+      content: |
+        You are an advanced AI system tasked with generating accurate and contextually relevant conversations based on the provided use case and functions.
+        Your primary goal is to create realistic and logically coherent dialogues that strictly adhere to the input structure and ensure the JSON format is always correct, complete, and error-free.
+
+        **Follow these guidelines:**
+        1. **Use Case**: The user will provide a use case.
+
+        2. **Functions**: You will be provided with a list of functions that you need to call within the conversation.
+
+        3. **Role Transitions**  
+            - Following a **user** message, only the **agent** (GPT) is allowed to respond.  
+            - Following an **agent** message:  
+                - If the agent invokes a function, the next response must come from the corresponding **tool**.  
+                - If no function is invoked, the next response must come from the **user**.  
+            - Following a **tool** message, the next response must always come from the **agent** (GPT).  
+            - **Consecutive messages** from the same role (e.g., **user → user** or **agent → agent**) are strictly **prohibited**.  
+
+        4. **Function Calls**:
+          - When the agent (GPT) needs to retrieve information or perform an action, it should invoke the appropriate function.
+          - Function calls must specify the correct function name and parameters required for the action.
+          - **Missing Parameters**: 
+              - If the user's message lacks sufficient information to proceed with the function call, the agent must explicitly request the required details from the user. If an available function can provide options for the missing parameter, invoke it to retrieve the information and present these options to the user, ensuring the tool's response is incorporated while asking for the necessary data.
+              - Once the required information is provided, the agent can include it in the function call.
+
+        5. **Structure**: The conversation must follow this structure for consistency and must adhere strictly to the role transitions rules outlined in point 3:
+          - User's message: {{ "from": "human", "value": "..." }}
+          - Agent's message: {{ "from": "gpt", "value": "..." }} (if applicable, before requesting missing parameters from the user, check if a function is available to provide options for that parameter. If so, invoke the function, present the retrieved options to the user, and then request the necessary data, incorporating the available information from the tool response.)
+          - User's message: {{ "from": "human", "value": "..." }} (if applicable)
+          - Agent's message: {{ "from": "gpt", "value": "", "tool_calls": [...] }} (if applicable)
+          - Tool response: {{ "from": "tool", "value": {{...}} }} (if applicable, and respond in clear and structured JSON format. The output must be actionable, precise, and written in English. Avoid any conversational or dialogue-style elements.)
+          - Agent's message: {{ "from": "gpt", "value": "..." }} (if applicable)
+
+        6. **Language**: The entire conversation, including user messages and agent responses, must be in **{language}**. Tool responses could be either in English or **{language}**.
+
+        7. **Tool Calls in Context**:  
+            - Use tools only when necessary to retrieve data, perform actions, or clarify user requests.  
+            - Ensure tool responses are concise, purpose-driven, and focused on delivering results. They must provide structured, actionable data in English, avoiding any conversational or dialogue-style outputs.
+            - Pass parameters to tools only if they are explicitly present in the user's input or derived from the context. If key information is missing, prompt the user to provide it before calling the tool. If possible, gather all required parameters in a single interaction.  
+            - The LLM must process tool outputs to craft responses that are clear, relevant, and actionable for the user. The final response should integrate insights from the tool with the LLM's contextual understanding, ensuring the user receives a natural and comprehensive answer based on the tool’s data.  
+
+        8. **Realism**: Ensure the conversation feels natural and follows a realistic flow based on the user's provided use case. The order of information is important—some functions provide static information that the user may need to continue the conversation, so it's essential to present these details at the right time without overwhelming the user with unnecessary technicalities.
+
+        9. **Formatting**: Present the entire conversation in properly formatted JSON, with clear and consistent indentation.
+
+        10. **Missing Information Handling**: 
+            - Before invoking a function, verify that all required parameters are present.
+            - If there is a function that provides static information that the user needs, invoke it first.    
+            - If any parameter is missing:
+                - If auxiliary functions are available to provide details about missing parameters, invoke those functions to retrieve the necessary information before prompting the user for the required parameters.
+                - Prompt the user in a natural, contextually appropriate way to provide the missing details. If the information was retrieved by an auxiliary function, present the user with a list of available options for the parameter.
+                - Once the user responds with the necessary information, proceed with the function call.
+            - Ensure parameters are populated only with information explicitly provided by the user or retrieved through a tool call designed to supply data for that parameter. Avoid adding information arbitrarily.
+
+        11. **Engagement**: The conversation must contain **at least 7 user questions** across the dialogue, ensuring active user engagement.
+
+        12. **Avoid mentioning internal function names in responses**: Refrain from referencing function names during the conversation, as users do not need to be aware of the internal workings or technical details.
+
+        13. **Out of Scope**: Include at least two out-of-scope user requests where the agent responds appropriately, indicating that no available function can handle the task.
+
+        **Example of the structure (only as a guide for the conversation, do not base your conversation on this directly):**
+        {{ [
+            {{ "from": "human", "value": "I would like to schedule an appointment." }},
+            {{ "from": "gpt", "value": "", "tool_calls": [{{ "name": "get_appointment_types", "arguments": {{}} }}] }},
+            {{ "from": "tool", "value": {{ "get_appointment_types": ["dental", "check-up", "emergency", "consultation"] }} }},
+            {{ "from": "gpt", "value": "Please provide your preferred location and appointment type. Available locations are Calle Molino 5, Barcelona, Calle Carmen 10, Valencia, or 'any'. Available appointment types are dental, check-up, emergency, and consultation." }},
+            ...
+        ] }}
+
+        **Warning**: Return **only** JSON, must be **complete** and **correct**. Do not include explanations, feedback, or any additional text, not even code block (```json```).
+
+    - role: user
+      content: | # Pass the {tools} generated in the first message here.
+        Use Case:  
+          {use_case}
+          
+        Tools:
+          {tools}
+  -
+    - role: system
+      content: |
+        You are an AI specialized in creating context-aware system prompts. Your task is to generate a clear and concise prompt that defines the model's role based on the context of the conversation, while providing guidance for responding appropriately to user inquiries. The prompt should ensure the model stays on use case, addresses off-topic queries respectfully, and remains focused on the conversation’s objectives, without including technical details or function-specific language. The generated prompt must be in **{language}**.
+        Start the prompt with phrases such as:
+        - "You are an assistant specialized in..."
+        - "Your role is to assist with..."
+        - "Your primary task is to provide support in..."
+        - "As a conversational agent, your role is to guide the conversation toward..."
+        - "You are tasked with ensuring the conversation remains focused on..."
+
+        Return only the generated system prompt, without any extra labels or unnecessary information such as "System Prompt:".
+    - role: user
+      content: | # Pass the {conversations} generated in the second message here.
+        Tools:
+          {tools}
+
+        Conversations:
+          {conversations}
+        
+output_keys:
+  - use_case  # The key for the newly generated conversations.
+  - tools  # The key for the newly generated conversations.
+  - conversations  # The key for the newly generated conversations.
+  - system_prompt  # The key for the generated system prompt.
+
+output_types:
+  - str  # Generated conversations will be formatted as JSON.
+  - json  # Generated conversations will be formatted as JSON.
+  - json   # Generate system prompt will be formatted as JSON.
+  - str  # Generate system prompt will be formatted as str.
+
+random_extra_keys: # These keys are picked randomly depending on the field.
+  language:
+    - English  # The dataset can be generated in English.
+    - Spanish  # The dataset can be generated in Spanish.
+    - Catalán  # The dataset can be generated in Catalán.

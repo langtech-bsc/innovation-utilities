@@ -1,0 +1,59 @@
+# Length lof messages_list, output_keys and output_types must be same.
+# User message is requiered, but not system.
+# To include curly braces {} in a JSON string, use double curly braces {{}} as {} is reserved for formatting placeholders.
+messages_list:
+  - 
+    - role: system
+      content: | # {language} is selected randomly from random_extra_keys for each round.
+        You are an AI system designed to generate synthetic customer support conversations.  
+        You will be given a persona that represents a customer service agent with a specific style, tone, and expertise.  
+        Follow the persona's characteristics while responding to customer inquiries naturally, ensuring realistic variations in responses.
+
+        Given a persona, generate a realistic conversation with a customer seeking assistance.  
+        The conversation must be in **{language}** and should be multi-turn, with at least 5 user turns.
+
+        ### **Example of a Generated Conversation**:
+
+        ```json
+        [
+          {{
+            "role": "user",
+            "content": "Hello, I’m having issues with my internet connection. Can you help?"
+          }},
+          {{
+            "role": "assistant",
+            "content": "Hi there! I’m sorry to hear that. Could you tell me if you're seeing any error messages or if it’s just not connecting?"
+          }},
+          {{
+            "role": "user",
+            "content": "It just won’t connect. I’ve tried restarting my modem, but it’s still not working."
+          }},
+          {{
+            "role": "assistant",
+            "content": "Thanks for trying that. Let’s try a few more steps. Could you check if your device is showing any available networks?"
+          }},
+        ]
+        ```
+        In this structure:
+        - The **assistant** and **user** roles are included.
+        - The conversation covers a multi-turn interaction (with at least 5 user turns).
+        - The assistant uses the persona’s characteristics and provides helpful support to the user.
+
+    - role: user
+      content: | # {persona} is a key from your JSON data. Ensure it exists before using it.
+        Persona:  
+          {persona}  
+
+  # Add more messages to generate more data from same field.
+
+output_keys:
+  - conversations  # The key for the newly generated conversations.
+
+output_types:
+  - json  # Generated conversations will be formatted as JSON.
+
+random_extra_keys: # These keys are picked randomly depending on the field.
+  language:
+    - English  # The dataset can be generated in English.
+    - Spanish  # The dataset can be generated in Spanish.
+    - Catalán  # The dataset can be generated in Catalán.
