@@ -196,24 +196,22 @@ class BaseMethod(ABC):
         if file_type == "json":
             df = pd.read_json(path)
         elif file_type == "jsonl":
-            if cache:
-                data = []
-                with open(path, 'r') as infile:
-                    for i, line in enumerate(infile, start=1):
-                        try:
-                            data.append(json.loads(line))
-                        except json.JSONDecodeError as e:
-                            print(f"Skipping bad line {i}: {e}")
-
-                if rank == 0:
-                    torch.distributed.barrier() # Wait all process here
+            if cache and rank == 0:
+                try:
+                    df = pd.read_json(path, lines=True)
+                except:
                     temp_path = path + ".tmp"
-                    with open(temp_path, 'w') as outfile:
-                        for line in data:
-                            outfile.write(line)
-                    os.replace(temp_path, path)
-            else:
-                df = pd.read_json(path, lines=True)
+                    with open(path, 'r') as infile, open(temp_path, 'w') as outfile:
+                        for i, line in enumerate(infile, start=1):
+                            try:
+                                json.loads(line)
+                                outfile.write(line)
+                            except json.JSONDecodeError as e:
+                                print(f"Skipping bad line {i}: {e}")
+                        os.replace(temp_path, path)
+            
+            torch.distributed.barrier()
+            df = pd.read_json(path, lines=True)
         elif file_type == "csv":
             df = pd.read_csv(path)
         elif file_type == "parquet":
