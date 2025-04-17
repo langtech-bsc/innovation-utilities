@@ -187,7 +187,7 @@ class BaseMethod(ABC):
             raise ValueError(f"Unsupported file format: {ext}")
     
     @staticmethod
-    def _read_file(path, file_type=None):
+    def _read_file(path, file_type=None, cache=False):
         if not file_type:
             file_type = BaseMethod._detect_file_type(path)
         
@@ -195,7 +195,20 @@ class BaseMethod(ABC):
         if file_type == "json":
             df = pd.read_json(path)
         elif file_type == "jsonl":
-            df = pd.read_json(path, lines=True)
+            if cache:
+                temp_path = path + ".tmp"
+                data = []
+                with open(path, 'r') as infile, open(temp_path, 'w') as outfile:
+                    for i, line in enumerate(infile, start=1):
+                        try:
+                            data.append(json.loads(line))
+                            outfile.write(line)
+                        except json.JSONDecodeError as e:
+                            print(f"Skipping bad line {i}: {e}")
+                os.replace(temp_path, path)
+                df = pd.DataFrame(data)
+            else:
+                df = pd.read_json(path, lines=True)
         elif file_type == "csv":
             df = pd.read_csv(path)
         elif file_type == "parquet":
@@ -224,7 +237,7 @@ class BaseMethod(ABC):
         file_paths = glob.glob(file_pattern)
 
         for file_path in file_paths:
-            df = BaseMethod._read_file(file_path)  # Read JSONL file into a DataFrame
+            df = BaseMethod._read_file(file_path, cache=True)  # Read JSONL file into a DataFrame
 
             # Add unique values from the current file to the set
             if not df.empty:

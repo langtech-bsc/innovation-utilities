@@ -37,6 +37,9 @@ class Default(BaseMethod):
                     response = json.loads(response)
                 except Exception as e:
                     logger.error(f"Faild to converte response to JSON: (task: {i}, field: {index})\nError: {e}")
+                    if json_data.get("json_convertion_error", None) is None:
+                        json_data["json_convertion_error"] = []
+                    json_data["json_convertion_error"].append(self.output_keys[i])
 
             json_data[self.output_keys[i]] = response
         
