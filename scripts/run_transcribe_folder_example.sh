@@ -3,7 +3,7 @@
 # DEFAULT PARAMETERS
 SCRIPT_DIR=$(dirname "$0")
 DEFAULT_PYTHON_SCRIPT="$SCRIPT_DIR/../examples/speech/transcribe_folder_example.py"
-DEFAULT_YAML_CONFIG="$SCRIPT_DIR/../config/transcribe_folder.yaml"
+DEFAULT_YAML_CONFIG="$SCRIPT_DIR/../config/speech/transcribe_folder.yaml"
 
 # PARAMETERS
 PYTHON_SCRIPT=$(realpath ${1:-$DEFAULT_PYTHON_SCRIPT})
