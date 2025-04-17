@@ -3,7 +3,7 @@ modules:
   collect_data:
     log_level: DEBUG
     data:
-      input_folder: data/input
+      input_folder: data/speech/input
       input_extensions:
         - .mp3
   transcribe_audios:
@@ -16,6 +16,6 @@ modules:
       beam_size: 5
       language: es
     data:
-      output_folder: data/output
+      output_folder: data/speech/output
       output_extensions:
         - .json
