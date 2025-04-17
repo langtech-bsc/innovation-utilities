@@ -1,5 +1,5 @@
-from innovation_utilities.modules import collect_data_module, transcribe_audios_module
-from innovation_utilities.utils import io_utils
+from innovation.speech.modules import collect_data_module, transcribe_audios_module
+from innovation.speech.utils import io_utils
 import argparse
 
 def main(yaml_config: str = None):
