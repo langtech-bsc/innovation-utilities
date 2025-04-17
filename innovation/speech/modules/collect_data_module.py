@@ -1,4 +1,4 @@
-from innovation_utilities.utils import io_utils
+from innovation.speech.utils import io_utils
 import logging
 import os
 
