@@ -24,3 +24,10 @@ def copy_yaml(input_path, output_path):
     # Open the output file and write the content to it
     with open(output_path, 'w', encoding='utf-8') as output_file:
         output_file.write(content)
+
+def generate_tmp_paths(path, number):
+    directory, filename = os.path.split(path)  # Separate path and filename
+    name, _ = os.path.splitext(filename)  # Split filename and extension
+    new_filename = f"._{name}_{number}.jsonl"  # Insert number before extension
+    pattern = f"._{name}_*.jsonl"  # Insert number before extension
+    return os.path.join(directory, pattern), os.path.join(directory, new_filename)  # Reconstruct full path
