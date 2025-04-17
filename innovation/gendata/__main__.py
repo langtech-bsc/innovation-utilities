@@ -175,7 +175,8 @@ def main():
     
     if global_rank == 0:
         if os.path.exists(args.output):
-            raise FileExistsError(f"Output path '{args.output}' already exists. Please choose a different path or remove the existing file.")
+            tmp_path_patter, _ = utils.generate_tmp_paths(args.output, 0)
+            raise FileExistsError(f"Output path '{args.output}' already exists. Please choose a different path, remove the existing file or move to {tmp_path_patter}, to skip this data (You must replace * by any text of number).")
         parent_dir = os.path.dirname(args.output)
         if parent_dir:  # Only try to create if there's a directory part
             os.makedirs(parent_dir, exist_ok=True)

@@ -6,6 +6,7 @@ import importlib.util
 import logging
 from typing import Optional, Type, Union
 import pandas as pd
+import torch
 import json
 import glob
 from innovation.gendata.utils import timer
@@ -63,7 +64,7 @@ class BaseMethod(ABC):
         
         self._check_data(self._data, self.unique_key, self.output_keys, self.output_types, self.messages_list)
         self._output_path_pattern, self._output_rank_path = self._generate_temporal_path(self.output, self.global_rank)
-        self._already_done = self.extract_unique_key_values(self._output_path_pattern, self.unique_key)
+        self._already_done = self.extract_unique_key_values(self._output_path_pattern, self.unique_key, self.global_rank)
     
     @staticmethod
     def _get_replaceable_keys(messages: MessagesType):
@@ -187,7 +188,7 @@ class BaseMethod(ABC):
             raise ValueError(f"Unsupported file format: {ext}")
     
     @staticmethod
-    def _read_file(path, file_type=None, cache=False):
+    def _read_file(path, file_type=None, cache=False, rank=0):
         if not file_type:
             file_type = BaseMethod._detect_file_type(path)
         
@@ -196,17 +197,21 @@ class BaseMethod(ABC):
             df = pd.read_json(path)
         elif file_type == "jsonl":
             if cache:
-                temp_path = path + ".tmp"
                 data = []
-                with open(path, 'r') as infile, open(temp_path, 'w') as outfile:
+                with open(path, 'r') as infile:
                     for i, line in enumerate(infile, start=1):
                         try:
                             data.append(json.loads(line))
-                            outfile.write(line)
                         except json.JSONDecodeError as e:
                             print(f"Skipping bad line {i}: {e}")
-                os.replace(temp_path, path)
-                df = pd.DataFrame(data)
+
+                if rank == 0:
+                    torch.distributed.barrier() # Wait all process here
+                    temp_path = path + ".tmp"
+                    with open(temp_path, 'w') as outfile:
+                        for line in data:
+                            outfile.write(line)
+                    os.replace(temp_path, path)
             else:
                 df = pd.read_json(path, lines=True)
         elif file_type == "csv":
@@ -230,14 +235,14 @@ class BaseMethod(ABC):
         return pd.DataFrame(all_data)
     
     @staticmethod
-    def extract_unique_key_values(file_pattern, key):
+    def extract_unique_key_values(file_pattern, key, rank):
         unique_values = set()  # To store unique values of the key
 
         # Get all file paths matching the pattern
         file_paths = glob.glob(file_pattern)
 
         for file_path in file_paths:
-            df = BaseMethod._read_file(file_path, cache=True)  # Read JSONL file into a DataFrame
+            df = BaseMethod._read_file(file_path, cache=True, rank=rank)  # Read JSONL file into a DataFrame
 
             # Add unique values from the current file to the set
             if not df.empty:
