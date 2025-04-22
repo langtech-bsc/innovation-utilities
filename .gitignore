@@ -12,6 +12,7 @@ venv/
 # Poetry & Pipenv files
 .poetry/
 .qodo
+poetry.lock
 
 # Distribution / packaging
 build/
