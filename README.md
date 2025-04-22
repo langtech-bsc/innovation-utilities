@@ -56,6 +56,12 @@ IMAGE_NAME="innovation-utilities"
 docker build -t $IMAGE_NAME .
 ```
 
+or directly run 
+
+```
+bash scripts/docker_build.sh
+```
+
 ##  3. Usage
 
 Running the examples should be as easy as using the scripts in the environment or in the docker image. Please, find more specific documentation here:
