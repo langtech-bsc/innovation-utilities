@@ -33,7 +33,13 @@ To enter the docker image interactively while mounting external folders run, for
 IMAGE_NAME="innovation-utilities"
 INPUT_FOLDER="data/speech/input"
 OUTPUT_FOLDER="data/speech/output"
-docker run -it -v $(realpath $INPUT_FOLDER):/$INPUT_FOLDER -v $(realpath $OUTPUT_FOLDER):/$OUTPUT_FOLDER --rm $IMAGE_NAME bash
+docker run -it --rm $IMAGE_NAME bash
+```
+
+or directly run 
+
+```
+bash scripts/docker_run.sh
 ```
 
 ##  4. <a name='4.Runningexamples'></a> Running examples
