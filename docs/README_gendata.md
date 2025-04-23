@@ -1,6 +1,6 @@
 # 📚 gendata
 
-**gendata** is a CLI tool for generating datasets using prompt-driven tasks and pluggable model APIs like OpenAI or local deployments. It supports JSON/YAML configuration, parallel execution, and flexible output formatting.
+**gendata** is a CLI tool for generating datasets using prompt-driven tasks and pluggable model APIs like OpenAI or local deployments. It supports YAML configuration, parallel execution, and flexible output formatting.
 
 ---
 
@@ -134,6 +134,7 @@ These fields are available for **all messages** in that row.
 ### Example YAML file
 
 ```yaml
+# task.yaml
 random_extra_keys:
   language:
     - English
@@ -168,6 +169,7 @@ messages_list:
 ## 📝 Example: Model Params YAML (`model_params.yml`)
 
 ```yaml
+# model_params.yaml
 temperature: 0.3
 max_tokens: 10000
 ```
