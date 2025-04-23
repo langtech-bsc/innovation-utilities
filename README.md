@@ -6,18 +6,15 @@
   - [1. Description](#1-description)
   - [2. Installation](#2-installation)
     - [Poetry](#poetry)
-    - [Other environments](#other-environments)
+    - [Pip or conda environments](#pip-or-conda-environments)
     - [Docker](#docker)
   - [3. Usage](#3-usage)
-    - [Configuration file](#configuration-file)
-    - [Script](#script)
-  - [4. Examples](#4-examples)
   - [5. Folder structure](#5-folder-structure)
 
 
 ##  1. Description
 
-This project aims to gather basic python classes to quickly run some basic tasks. We'll start with ASR and some examples.
+This project aims to gather basic python classes to quickly run some basic tasks. We'll start with ASR and data generation examples.
 
 Some recommendations:
 - We recommend using the code by building the docker image.
@@ -31,16 +28,24 @@ Some recommendations:
 To setup this project you can use poetry.
 
 1. install poetry: https://python-poetry.org/docs/
-2. should be as easy as running
+   1. in linux it is really easy to follow the instruction of the official installer
+   2. here: https://python-poetry.org/docs/#installing-with-the-official-installer
+2. creating the env should be as easy as running
 ```bash
 git clone git@github.com:langtech-bsc/innovation-utilities.git
 cd innovation-utilities
+poetry config virtualenvs.in-project true # to create the env in the project folder
+poetry lock  # to create/update the lock file
 poetry install
 ```
 
-### Other environments
+### Pip or conda environments
 
-The requirements.txt file has been exported from the poetry environment in case the user needs to work with other environments.
+If you work with other env different than poetry you can run:
+
+```bash
+pip install -e .  # in dev mode
+```
 
 ### Docker
 
@@ -51,66 +56,17 @@ IMAGE_NAME="innovation-utilities"
 docker build -t $IMAGE_NAME .
 ```
 
-To enter the docker image interactively while mounting external folders run, for example:
+or directly run 
 
-```bash
-IMAGE_NAME="innovation-utilities"
-INPUT_FOLDER="data/input"
-OUTPUT_FOLDER="data/output"
-docker run -it -v $(realpath $INPUT_FOLDER):/$INPUT_FOLDER -v $(realpath $OUTPUT_FOLDER):/$OUTPUT_FOLDER --rm $IMAGE_NAME bash
+```
+bash scripts/docker_build.sh
 ```
 
 ##  3. Usage
 
-Running the examples should be as easy as using the scripts in the environment or in the docker image.
-
-### Configuration file
-
-Check the configuration files used by the examples in order to know how to edit them.
-
-Example in [config/transcribe_folder.yaml](config/transcribe_folder.yaml)
-
-```yaml
----
-modules:
-  collect_data:
-    log_level: DEBUG
-    data:
-      input_folder: data/input     # change this path to your convenience
-      input_extensions:
-        - .mp3                     # it works with wav files as well
-  transcribe_audios:
-    log_level: DEBUG
-    params:
-      model: faster-whisper
-      model_size: large-v2        # the first execution in a container the model will be downloaded
-      device: null                # null, cpu or cuda. if null it will check if cuda is available first, cpu otherwise
-      compute_type: null          # can be left like this
-      beam_size: 5
-      language: es                # es for Spanish
-    data:
-      output_folder: data/output  # change this path to your convenience
-      output_extensions:
-        - .json
-```
-
-### Script
-
-Either from within the Docker container or you local environment run:
-
-```bash
-bash scripts/run_transcribe_folder_example.sh
-```
-
-
-## 4. Examples
-
-Here we'll list the examples we include in the utilities repo:
-- [examples/transcribe_folder_example.py](examples/transcribe_folder_example.py): 
-  - it transcribes the wav files in a folder into txt files within the output folder. 
-  - Parameters are specified in the configration file config/transcribe_folder.yaml. 
-  - The current example should work as is with a folder containing wav files in Spanish. 
-  - It can be run with script: bash [scripts/run_transcribe_folder_example.sh](scripts/run_transcribe_folder_example.sh). The first time you run it will download the model files.
+Running the examples should be as easy as using the scripts in the environment or in the docker image. Please, find more specific documentation here:
+- [speech module](docs/README_speech.md)
+- gendata module
 
 ## 5. Folder structure
 
@@ -120,19 +76,53 @@ This is the current folder structure:
 $ tree innovation-utilities/
 innovation-utilities/
 ├── config                                      # config files
-│   └── transcribe_folder.yaml                  #   - config file for the corresponding example
+│   └── speech
+│       └── transcribe_folder.yaml              #   - config file for the corresponding example
 ├── data
-│   ├── input                                   # example of input data
-│   │   ├── common_voice_es_41913638.mp3
-│   │   ├── common_voice_es_41913640.mp3
-│   │   └── common_voice_es_42044997.mp3
-│   └── output                                  # example of output data
-│       ├── common_voice_es_41913638.json
-│       ├── common_voice_es_41913640.json
-│       └── common_voice_es_42044997.json
+│   └── speech
+│       ├── input                               # example of input data
+│       │   ├── common_voice_es_41913638.mp3
+│       │   ├── common_voice_es_41913640.mp3
+│       │   └── common_voice_es_42044997.mp3
+│       └── output                              # example of output data
+│           ├── common_voice_es_41913638.json
+│           ├── common_voice_es_41913640.json
+│           └── common_voice_es_42044997.json
 ├── Dockerfile
 ├── examples                                    # examples showing how the classes can be used
-│   └── transcribe_folder_example.py            #   - ASR applied to a folder
+│   └── speech
+│       └── transcribe_folder_example.py        #   - ASR applied to a folder
+├── innovation                                  # package main folder
+│   ├── gendata
+│   │   ├── __init__.py
+│   │   ├── __main__.py
+│   │   ├── methods
+│   │   │   ├── default.py
+│   │   │   ├── __init__.py
+│   │   │   └── method_manager.py
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── model_manager.py
+│   │   │   └── open_ai.py
+│   │   ├── models_examples
+│   │   │   └── openai.yml
+│   │   ├── tasks_examples
+│   │   │   ├── complex.yml
+│   │   │   └── simple.yml
+│   │   └── utils
+│   │       ├── class_manager.py
+│   │       ├── logger.py
+│   │       ├── timer.py
+│   │       └── utils.py
+│   └── speech
+│       ├── __init__.py
+│       ├── modules                             # modules classes
+│       │   ├── __init__.py
+│       │   ├── collect_data_module.py          #   - for data collection
+│       │   └── transcribe_audios_module.py     #   - for asr
+│       └── utils                               # utils functions
+│           ├── __init__.py
+│           └── io_utils.py
 ├── poetry.lock                                 # poetry env related file
 ├── pyproject.toml                              # poetry env related file
 ├── README.md                                   # this readme file
@@ -141,14 +131,4 @@ innovation-utilities/
 │   ├── activate_poetry_env.sh                  #   - used to activate poetry env
 │   ├── poetry2requirements.sh                  #   - used to generate requirements.txt
 │   └── run_example.sh                          #   - used to run the transcribe_folder.py
-└── src                                         # package src folder
-    └── innovation_utilities                    # package main folder
-        ├── __init__.py
-        ├── modules                             # modules classes
-        │   ├── transcribe_audios_module.py     #   - for asr
-        │   ├── collect_data_module.py          #   - for data collection
-        │   └── __init__.py
-        └── utils                               # utils functions
-            ├── __init__.py
-            └── io_utils.py
 ```
