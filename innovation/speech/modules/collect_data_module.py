@@ -26,5 +26,9 @@ class collect_data():
         files = io_utils.get_files_by_extension(self.config["data"]["input_folder"], 
                                                 self.config["data"]["input_extensions"])
         
+        if self.config["data"]["max_files"] != -1:
+            logging.info(f"[collect_data module] getting only {self.config['data']['max_files']} files")
+            files = files[:self.config["data"]["max_files"]]
+
         logging.info(f"[collect_data module] {len(files)} listed")
         self.files = files
