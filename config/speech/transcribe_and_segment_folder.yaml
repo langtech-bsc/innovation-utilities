@@ -1,0 +1,32 @@
+---
+modules:
+  collect_data:
+    log_level: DEBUG
+    data:
+      input_folder: data/speech/renfe/input
+      max_files: -1
+      input_extensions:
+        - .wav
+  transcribe_audios:
+    log_level: DEBUG
+    params:
+      model: faster-whisper
+      model_size: large-v2
+      device: auto
+      compute_type: auto
+      beam_size: 5
+      language: es
+    data:
+      output_folder: data/speech/renfe/output/asr
+      output_extensions:
+        - .json
+  segmenter:
+    log_level: DEBUG
+    params:
+      min_pause_between_groups: 1
+      max_group_duration: 10
+      group_character_delimiters: [".", "!", "?", "…"]
+    data:
+      output_folder: data/speech/renfe/output/segmentation
+      output_extensions:
+        - .json
