@@ -3,6 +3,22 @@ from typing import List, Set
 import yaml
 import logging
 import json
+import string
+
+def clean_text(text: str) -> str:
+    """
+    Clean the input text by removing punctuation and converting to lowercase.
+
+    Args:
+        text (str): The input text to clean.
+
+    Returns:
+        str: The cleaned text.
+    """
+    translator = str.maketrans('', '', string.punctuation + "¿")
+    text_without_punctuation = text.translate(translator)
+
+    return text_without_punctuation.lower()
 
 def load_text(file_path: str) -> List[str]:
     """
