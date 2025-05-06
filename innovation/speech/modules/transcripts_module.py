@@ -145,11 +145,11 @@ class group_transcript_segments():
         groups = []
 
         current_group = {}
-        current_group["start"] = transcription[0]["start"]
-        current_group["end"] = transcription[0]["end"]
-        current_group["text"] = [transcription[0]["text"]]
+        current_group["start"] = transcription["segments"][0]["start"]
+        current_group["end"] = transcription["segments"][0]["end"]
+        current_group["text"] = [transcription["segments"][0]["text"]]
 
-        for segment in transcription[1:]:
+        for segment in transcription["segments"][1:]:
 
             if self.join_current_group_and_next_segment(segment, current_group): 
                 current_group["end"] = segment["end"]
