@@ -9,8 +9,8 @@ from pathlib import Path
 VALID_ASR_CONFIGS = {
     "faster_whisper": {
         "model_size": ["small-v2", "medium-v2", "large-v2"],
-        "device": ["cpu", "cuda", None],
-        "compute_type": ["int8", "float16", "int8_float16", None]
+        "device": ["cpu", "cuda", "auto", None],
+        "compute_type": ["int8", "float16", "int8_float16", "auto", None]
     }
 }
 
@@ -114,7 +114,13 @@ class FasterWhisperASR(ASRBase):
             for extension in self.output_extensions:
                 if extension == ".json":
                     json_file = os.path.join(self.output_folder, Path(wav_file).stem + extension) 
-                    io_utils.save_json(transcription, json_file)
+                    data = {
+                        "language": info.language,
+                        "language_probability": info.language_probability,
+                        "duration": info.duration,
+                        "segments": transcription
+                    }
+                    io_utils.save_json(data, json_file)
             all_output_files.append(json_file)
 
         return all_transcriptions, all_infos, all_output_files
