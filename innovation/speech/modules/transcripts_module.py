@@ -39,9 +39,11 @@ class evaluate_transcriptions():
                 for eval_data in all_eval_data:
                     eval_data["id"] = os.path.basename(eval_data["transcription_file"])
                 df = pd.DataFrame.from_records(all_eval_data) 
-                df.sort_values(by = "id", inplace = True)
+                df.drop(columns = ["transcription_file", "reference_file"], inplace = True)
+                df.sort_values(by = "wer", ascending = False, inplace = True)
                 logging.info(f"Saving evaluation data to {extension} file: {output_csv_file}")
-                df.round(4).to_csv(output_csv_file, columns=["id", "wer", "cer"], index = False)
+                cols_in_df = ["id", "duration", "language", "words_transcription", "words_reference", "n_labels", "wer", "cer"]
+                df.round(4).to_csv(output_csv_file, columns = cols_in_df, index = False)
         
     def validate_config(self):
 
@@ -60,13 +62,21 @@ class evaluate_transcriptions():
         data = io_utils.load_json(transcript_file)
         transcription = " ".join([segment["text"] for segment in data["segments"]])
         reference_transcription = " ".join(io_utils.load_text(reference_file))
+        n_labels = reference_transcription.count("[")
+        transcription_clean = io_utils.clean_text(transcription)
+        reference_transcription_clean = io_utils.clean_text(reference_transcription)
         eval_data = {"transcription_file": transcript_file,
-                     "reference_file": reference_file}
+                     "reference_file": reference_file,
+                     "duration": data["duration"],
+                     "language": data["language"],
+                     "words_transcription": len(transcription_clean.split(" ")),
+                     "words_reference": len(reference_transcription_clean.split(" ")),
+                     "n_labels": n_labels}
         for metric in self.config["params"]["metrics"]:
             if metric == "wer":
-                eval_data[metric] = wer(reference_transcription, transcription)
+                eval_data[metric] = wer(reference_transcription_clean, transcription_clean)
             if metric == "cer":
-                eval_data[metric] = cer(reference_transcription, transcription)
+                eval_data[metric] = cer(reference_transcription_clean, transcription_clean)
         
         return eval_data
 
