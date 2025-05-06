@@ -4,7 +4,7 @@ modules:
     log_level: DEBUG
     data:
       input_folder: data/speech/renfe380/wav
-      max_files: 10
+      max_files: 20
       input_extensions:
         - .WAV
   transcribe_audios:
@@ -15,7 +15,7 @@ modules:
       device: auto
       compute_type: auto
       beam_size: 5
-      language: es
+      language: null
     data:
       output_folder: data/speech/renfe380/transcriptions
       output_extensions:
