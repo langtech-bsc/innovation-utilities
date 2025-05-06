@@ -4,6 +4,20 @@ import yaml
 import logging
 import json
 
+def load_text(file_path: str) -> List[str]:
+    """
+    Load a text file and return its lines as a list of strings.
+
+    Args:
+        file_path (str): The path to the text file.
+
+    Returns:
+        List[str]: A list of lines from the text file.
+    """
+    with open(file_path, 'r') as file:
+        lines = [line.strip() for line in file.readlines()]
+    return lines
+
 def save_txt(lines: List[str], file_path: str) -> None:
     """
     Save a list of strings to a text file.
@@ -25,6 +39,19 @@ def save_json(lines: None, file_path: str) -> None:
     """
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(lines, f, ensure_ascii=False, indent=4)
+
+def load_json(file_path: str) -> dict:
+    """
+    Load a JSON file as a dictionary.
+
+    Args:
+        file_path (str): The path to the JSON file.
+
+    Returns:
+        dict: The loaded JSON data as a dictionary.
+    """
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
 
 def show_config(config: dict) -> None:
     """
@@ -89,3 +116,4 @@ def check_folder_exists(folder: str) -> bool:
         bool: True if the folder exists, False otherwise.
     """
     return os.path.exists(folder) and os.path.isdir(folder)
+
