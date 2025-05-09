@@ -18,17 +18,17 @@ def main(yaml_config: str = None):
     data()
 
     # Apply ASR to the listed files
-    # asr = transcribe_audios_module.asr_factory(config = config["modules"]["transcribe_audios"])
-    # asr(wav_files = data.files)
+    asr = transcribe_audios_module.asr_factory(config = config["modules"]["transcribe_audios"])
+    asr(wav_files = data.files)
 
     # Segment the transcribed files
     segmenter = transcripts_module.group_transcript_segments(config = config["modules"]["segmenter"])
-    # segmenter(transcript_files = asr.all_output_files)
-    transcript_files = ["data/speech/renfe/output/asr/1cd8983e-f38b-4df6-9510-7b973e006a17_nointro.json",
-                        "data/speech/renfe/output/asr/0ec9288e-028a-463c-bc2d-d1c267249fac_nointro.json",
-                        "data/speech/renfe/output/asr/1aec7b96-965f-422f-aee7-754e5e1f57ef_nointro.json",
-                        "data/speech/renfe/output/asr/1a74859d-9185-4c33-8792-e33e5e67d3f7_nointro.json"]
-    segmenter(transcript_files = transcript_files)
+    segmenter(transcript_files = asr.all_output_files)
+    # transcript_files = ["data/speech/renfe/output/asr/1cd8983e-f38b-4df6-9510-7b973e006a17_nointro.json",
+    #                     "data/speech/renfe/output/asr/0ec9288e-028a-463c-bc2d-d1c267249fac_nointro.json",
+    #                     "data/speech/renfe/output/asr/1aec7b96-965f-422f-aee7-754e5e1f57ef_nointro.json",
+    #                     "data/speech/renfe/output/asr/1a74859d-9185-4c33-8792-e33e5e67d3f7_nointro.json"]
+    # segmenter(transcript_files = transcript_files)
 
 
 
