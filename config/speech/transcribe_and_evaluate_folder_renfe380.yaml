@@ -1,13 +1,15 @@
 ---
 modules:
   collect_data:
+    do_step: false
     log_level: DEBUG
     data:
       input_folder: data/speech/renfe380/wav
-      max_files: 20
+      max_files: -1
       input_extensions:
         - .WAV
   transcribe_audios:
+    do_step: false
     log_level: DEBUG
     params:
       model: faster-whisper
@@ -17,10 +19,11 @@ modules:
       beam_size: 5
       language: null
     data:
-      output_folder: data/speech/renfe380/transcriptions
+      output_folder: data/speech/renfe380_test/transcriptions
       output_extensions:
         - .json
   evaluate_transcriptions:
+    do_step: true
     log_level: DEBUG
     params:
       reference_folder: ../innovation-renfe-dev/transcripts/anonymized/
@@ -30,7 +33,7 @@ modules:
         - wer
         - cer
     data:
-      output_folder: data/speech/renfe380/metrics
+      output_folder: data/speech/renfe380_test/metrics_20250509
       output_extensions:
         - .json
         - .csv
