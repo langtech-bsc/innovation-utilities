@@ -17,7 +17,7 @@ modules:
       beam_size: 5
       language: es
     data:
-      output_folder: data/speech/renfe/output/asr
+      output_folder: data/speech/renfe_test/output/asr
       output_extensions:
         - .json
   segmenter:
@@ -27,6 +27,6 @@ modules:
       max_group_duration: 10
       group_character_delimiters: [".", "!", "?", "…"]
     data:
-      output_folder: data/speech/renfe/output/segmentation
+      output_folder: data/speech/renfe_test/output/segmentation
       output_extensions:
         - .json
